@@ -1,15 +1,21 @@
+# Import
 import seaborn as sns
+# Importing icon_svg function for displaying icons
 from faicons import icon_svg
-
+# Importing Shiny for Python
 from shiny import reactive
+# Importing specific components from Shiny and Shiny Express
 from shiny.express import input, render, ui
+# Importing the palmerpenguins dataset
 import palmerpenguins 
 
+# load the data into an initial Pandas DataFrame
 df = palmerpenguins.load_penguins()
 
-ui.page_opts(title="Penguins dashboard", fillable=True)
+# Set up page options with a title, fillable option
+ui.page_opts(title="Mhamed Penguins dashboard", fillable=True)
 
-
+# A sidebar for filter controls
 with ui.sidebar(title="Filter controls"):
     ui.input_slider("mass", "Mass", 2000, 6000, 6000)
     ui.input_checkbox_group(
@@ -18,21 +24,22 @@ with ui.sidebar(title="Filter controls"):
         ["Adelie", "Gentoo", "Chinstrap"],
         selected=["Adelie", "Gentoo", "Chinstrap"],
     )
+    # Horizontal rule and links section with relevant URLs
     ui.hr()
     ui.h6("Links")
     ui.a(
         "GitHub Source",
-        href="https://github.com/denisecase/cintel-07-tdash",
+        href="https://github.com/Mhamedben/cintel-07-tdash",
         target="_blank",
     )
     ui.a(
         "GitHub App",
-        href="https://denisecase.github.io/cintel-07-tdash/",
+        href="https://Mhamedben.github.io/cintel-07-tdash/",
         target="_blank",
     )
     ui.a(
         "GitHub Issues",
-        href="https://github.com/denisecase/cintel-07-tdash/issues",
+        href="https://github.com/Mhamedben/cintel-07-tdash/issues",
         target="_blank",
     )
     ui.a("PyShiny", href="https://shiny.posit.co/py/", target="_blank")
@@ -47,23 +54,25 @@ with ui.sidebar(title="Filter controls"):
         target="_blank",
     )
 
-
+# Creating layout columns for displaying penguin statistics
 with ui.layout_column_wrap(fill=False):
-    with ui.value_box(showcase=icon_svg("earlybirds")):
-        "Number of penguins"
+    with ui.value_box(showcase=icon_svg("earlybirds"), style="font-family: Courier, monospace; font-weight: bold; color: red; background-color: yellow;"):
+        ("Number of penguins")
 
         @render.text
         def count():
             return filtered_df().shape[0]
 
-    with ui.value_box(showcase=icon_svg("ruler-horizontal")):
+# Value box to display average bill length
+    with ui.value_box(showcase=icon_svg("ruler-horizontal"), style="font-family: Courier, monospace; font-weight: bold; color: red; background-color: yellow;"):
         "Average bill length"
 
         @render.text
         def bill_length():
             return f"{filtered_df()['bill_length_mm'].mean():.1f} mm"
 
-    with ui.value_box(showcase=icon_svg("ruler-vertical")):
+    # Value box to display average bill depth
+    with ui.value_box(showcase=icon_svg("ruler-vertical"), style="font-family: Courier, monospace; font-weight: bold; color: red; background-color: yellow;"):
         "Average bill depth"
 
         @render.text
@@ -71,6 +80,7 @@ with ui.layout_column_wrap(fill=False):
             return f"{filtered_df()['bill_depth_mm'].mean():.1f} mm"
 
 
+# Creating layout columns for displaying plots and data frames
 with ui.layout_columns():
     with ui.card(full_screen=True):
         ui.card_header("Bill length and depth")
@@ -84,6 +94,7 @@ with ui.layout_columns():
                 hue="species",
             )
 
+    # Card to display summary statistics of penguin data
     with ui.card(full_screen=True):
         ui.card_header("Penguin Data")
 
@@ -98,10 +109,9 @@ with ui.layout_columns():
             ]
             return render.DataGrid(filtered_df()[cols], filters=True)
 
-
 #ui.include_css(app_dir / "styles.css")
 
-
+# Filtered dataframe based on input values
 @reactive.calc
 def filtered_df():
     filt_df = df[df["species"].isin(input.species())]
